@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+</head>
+<body>
+<p th:text="${book.title}"/>
+<p th:text="${book.author}"/>
+<p th:text="${#numbers.formatDecimal(book.price,2,2)}"/>
+<p th:text="${#temporals.format(book.releaseDate, 'dd-MM-yyyy HH:mm')}"/>
+<p th:text="${book.bestseller}"/>
+</body>
+</html>
