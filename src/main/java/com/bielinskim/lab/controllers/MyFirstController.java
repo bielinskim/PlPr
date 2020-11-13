@@ -1,6 +1,6 @@
-package com.bielinskim.lab01.controllers;
+package com.bielinskim.lab.controllers;
 
-import com.bielinskim.lab01.models.Book;
+import com.bielinskim.lab.models.Book;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

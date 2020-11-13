@@ -1,4 +1,4 @@
-package com.bielinskim.lab01;
+package com.bielinskim.lab;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

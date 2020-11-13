@@ -1,4 +1,4 @@
-package com.bielinskim.lab01.models;
+package com.bielinskim.lab.models;
 
 import java.time.LocalDate;
 
