@@ -15,58 +15,43 @@ import java.util.Optional;
 @SessionAttributes(value = {"obj1", "obj2"})
 public class BookController {
 
-    ArrayList<Book> bookList = new ArrayList<Book>();
-    List<CoverType> list = new ArrayList<CoverType>();
+    //ArrayList<Book> bookList = new ArrayList<Book>();
+    //List<CoverType> list = new ArrayList<CoverType>();
 
 
     public BookController() {
-        list.add(new CoverType(1, "Oprawa twarda tradycyjna"));
-        list.add(new CoverType(2, "Oprawa twarda przemysłowa"));
-        list.add(new CoverType(3, "Oprawa klejona"));
-        list.add(new CoverType(4, "Oprawa szyta"));
-
-        var book = new Book();
-        book.setId(1l);
-        book.setTitle("W pustyni i w puszczy");
-        book.setAuthor("Henryk Sienkiewicz");
-        book.setReleaseDate(LocalDate.of(2005, 12, 23));
-        book.setPrice(39.00f);
-        book.setBestseller(true);
-        book.setCoverType(list.get(2));
-
-        bookList.add(book);
-        bookList.add(new Book(2l, "Andrzej Sapkowski", "Sezon burz", LocalDate.of(2008, 11, 13), 39.87f, true, list.get(1)));
-        bookList.add(new Book(3l, "Tony Halik", "Moja wielka przygoda", LocalDate.of(1988, 11, 13), 29.87f, true, list.get(3)));
 
 
     }
 
     @GetMapping(path={"/book", "/book/{id}"})
-    public String getBookController(Model model, @PathVariable("id") Optional<Long> eid){
+    public String getBookController(Model model, @ModelAttribute("books") List<Book> books, @PathVariable("id") Optional<Long> eid){
 
 
         if(eid.isPresent()) {
-            var book = bookList.stream().filter(item -> ((Book) item).getId() == eid.get()).findFirst();
+            var book = books.stream().filter(item -> ((Book) item).getId() == eid.get()).findFirst();
             model.addAttribute(book.get());
         } else {
-            var book = bookList.stream().filter(item -> ((Book) item).getId() == 1).findFirst();
+            var book = books.stream().filter(item -> ((Book) item).getId() == 1).findFirst();
             model.addAttribute(book.get());
         }
         return "book";
     }
 
     @GetMapping("/list")
-    public String showList(Model model) {
+    public String showList(@ModelAttribute("books") List<Book> books) {
 
-        model.addAttribute("books", bookList);
+        System.out.println(books);
+
+       // model.addAttribute("books", bookList);
         return "bookList";
     }
 
     @GetMapping(path={"/showForm", "/showForm/{id}"})
-    public String showForm(Model model, @PathVariable("id") Optional<Long> eid) {
+    public String showForm(Model model, @ModelAttribute("books") List<Book> books, @PathVariable("id") Optional<Long> eid) {
 
         if(eid.isPresent()) {
-            var book = bookList.stream().filter(item -> ((Book) item).getId() == eid.get()).findFirst();
+            var book = books.stream().filter(item -> ((Book) item).getId() == eid.get()).findFirst();
             model.addAttribute(book.get());
             model.addAttribute("obj1", new Object1());
             return "editBook";
@@ -79,21 +64,59 @@ public class BookController {
 
     }
     @PostMapping(path={"/showForm", "/showForm/{id}"})
-    public String processForm(@ModelAttribute("book") Book book,  @ModelAttribute("coverTypesList") CoverType covers, @ModelAttribute(value = "obj1") Object1 object1, @PathVariable("id") Optional<Long> eid) {
+    public String processForm(Book book, @ModelAttribute("books") List<Book> books, @ModelAttribute(value = "obj1") Object1 object1, @PathVariable("id") Optional<Long> eid) {
 
 
-        var coverType = list.stream().filter(ct -> ((CoverType) ct).getId() == book.getCoverType().getId()).findFirst();
-        book.setCoverType(coverType.get());
+
+        //var tmpBook = books.stream().filter(item -> ((Book) item).getId() == eid.get()).findFirst();
+        //var coverType = covers.stream().filter(ct -> ((CoverType) ct).getId() == book.getCoverType().getId()).findFirst();
+        //book.setCoverType(coverType.get());
+
         if(!eid.isPresent()) {
-            bookList.add(book);
+            books.add(book);
+        } else {
+            for(int i=0; i<books.size(); i++) {
+                if(books.get(i).getId() == eid.get()) {
+                    books.set(i, book);
+                }
+            }
         }
         return "book";
 
     }
     @ModelAttribute("coverTypesList")
     public List<CoverType> loadCoverTypes() throws Exception {
-        return list;
+        List<CoverType> covers = new ArrayList<CoverType>();
+        covers.add(new CoverType(1, "Oprawa twarda tradycyjna"));
+        covers.add(new CoverType(2, "Oprawa twarda przemysłowa"));
+        covers.add(new CoverType(3, "Oprawa klejona"));
+        covers.add(new CoverType(4, "Oprawa szyta"));
+        return covers;
     }
+    @ModelAttribute("books")
+    public List<Book> loadBooks(@ModelAttribute("coverTypesList") List<CoverType> covers) throws Exception {
+
+
+        List<Book> books = new ArrayList<Book>();
+
+
+        var book = new Book();
+        book.setId(1l);
+        book.setTitle("W pustyni i w puszczy");
+        book.setAuthor("Henryk Sienkiewicz");
+        book.setReleaseDate(LocalDate.of(2005, 12, 23));
+        book.setPrice(39.00f);
+        book.setBestseller(true);
+        book.setCoverType(covers.get(2));
+
+        books.add(book);
+        books.add(new Book(2l, "Andrzej Sapkowski", "Sezon burz", LocalDate.of(2008, 11, 13), 39.87f, true, covers.get(1)));
+        books.add(new Book(3l, "Tony Halik", "Moja wielka przygoda", LocalDate.of(1988, 11, 13), 29.87f, true, covers.get(3)));
+        return books;
+    }
+
+
+
     @ModelAttribute(value = "obj2")
     public List<Object2> loadDependencies() {
         System.out.println("wywołano metodę loadDependencies");

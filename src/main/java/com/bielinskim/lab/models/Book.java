@@ -1,5 +1,7 @@
 package com.bielinskim.lab.models;
 
+import org.springframework.format.annotation.NumberFormat;
+
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -8,6 +10,7 @@ public class Book {
     String author;
     String title;
     LocalDate releaseDate;
+    @NumberFormat(pattern = "#.00")
     Float price;
     Boolean bestseller;
     CoverType coverType;
